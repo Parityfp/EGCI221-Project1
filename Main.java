@@ -66,21 +66,28 @@ public class Main {
 
         System.out.println("-----------  N-Queen NxN-Board  -----------");
         System.out.println("Enter N for N*N board (N must be at least 4)");
-        N = Integer.parseInt(scanner.nextLine());
+        while (true) {                  // Ask for N size
+            try {
+                N = Integer.parseInt(scanner.nextLine());
+                if (N>3) break;
+            } catch (Exception e) { }
+            System.out.println("Error. Please enter valid input.");
+        }
         Board board = new Board(N);
-        board.displayBoard();
+        board.displayBoard();           // Print empty board
 
-        while (true) {
-            System.out.println("\nManually place the First Queen? (y for yes, others for no)");
+        System.out.println("\nManually place the First Queen? (y for yes, n for no)");
+        while (true) {                  // ASk for Manual Input
             input = scanner.nextLine().toLowerCase();
-            while (true) {
-                if (input.length()==1) if (input.equals("y") || input.equals("n")) break;
-                System.out.println("Error. Please enter valid input.");
-                input = scanner.nextLine().toLowerCase();
-            }
-            if (input.equals("y"))
-            break;
+            if (input.equals("y") || input.equals("n")) break;
+            System.out.println("Error. Please enter valid input.");
         }
         scanner.close();
+        /*if (input.equals("n")) {        // No
+             *******************
+        }
+        else {                          // Yes
+             *******************
+        }*/
     }
 }
