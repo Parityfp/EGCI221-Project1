@@ -26,8 +26,14 @@ class Board {
         this.queenList = new ArrayList<>();
     }
 
+    public void pushQueen() {}              // **********************************************************************************
+
+    public void popQueen() {}               // **********************************************************************************
+
+    public boolean findSolution(int row) { return true; } // **********************************************************************************
+
     public void displayBoard() {
-        char board[][] = new char[N][N];
+        char[][] board = new char[N][N];
 
         for (int i=0; i<N; i++) {                                   // Fills board with '.' as empty space
             for (int j=0; j<N; j++) {
@@ -59,35 +65,57 @@ class Board {
 }
 
 public class Main {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String input;
         int N;
 
+
         System.out.println("-----------  N-Queen NxN-Board  -----------");
-        System.out.println("Enter N for N*N board (N must be at least 4)");
         while (true) {                  // Ask for N size
+            System.out.println("Enter N for N*N board (N must be at least 4)");
             try {
                 N = Integer.parseInt(scanner.nextLine());
-                if (N>3) break;
+                if (N>=4) break;
             } catch (Exception e) { }
-            System.out.println("Error. Please enter valid input.");
+            System.out.println("\nError. Please input 4 or more only.");
         }
+
+
         Board board = new Board(N);
         board.displayBoard();           // Print empty board
 
-        System.out.println("\nManually place the First Queen? (y for yes, n for no)");
+
         while (true) {                  // ASk for Manual Input
+            System.out.println("Manually place the First Queen? (y for yes, n for no)");
             input = scanner.nextLine().toLowerCase();
             if (input.equals("y") || input.equals("n")) break;
-            System.out.println("Error. Please enter valid input.");
+            System.out.println("\nError. Please enter valid input.");
+        }
+
+
+        if (input.equals("n")) {        // No (Let program do the work)
+            board.findSolution(0);
+        } else {                          // Yes (Input manually)
+            int[] place = new int[2];
+            while (true) {
+                System.out.print("Enter row: ");
+                try {
+                    place[0] = Integer.parseInt(scanner.nextLine());
+                    if (place[0]<N+1) break;
+                } catch (Exception e) { }
+                System.out.printf("\nError. Please enter no more than %d.\n", N+1);
+            }
+            while (true) {
+                System.out.print("Enter column: ");
+                try {
+                    place[1] = Integer.parseInt(scanner.nextLine());
+                    if (place[1]<N+1) break;
+                } catch (Exception e) { }
+                System.out.printf("\nError. Please enter no more than %d.\n", N+1);
+            }
+            // ********************************************
         }
         scanner.close();
-        /*if (input.equals("n")) {        // No
-             *******************
-        }
-        else {                          // Yes
-             *******************
-        }*/
     }
 }
