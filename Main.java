@@ -36,7 +36,7 @@ class Board {
 
     public boolean queenCheck(int row, int column) {
         for (QueenPlacement q : queenList) {
-            if (q.row == row || q.column == column || Math.abs(q.row-row) == (q.column-column))
+            if (q.row == row || q.column == column || Math.abs(q.row-row) == Math.abs(q.column-column))
                 return false;
         }
         return true;
