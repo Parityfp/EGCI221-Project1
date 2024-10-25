@@ -18,7 +18,7 @@ class Board {
     private ArrayList<QueenPlacement> queenList;
     private ArrayList<QueenPlacement> manualList;
 
-    public Board(int N) {                                           // Constructor
+    public Board(int N) {                               // Constructor
         this.N = N;
         this.totalSolution = 0;
         this.queenList = new ArrayList<>();
