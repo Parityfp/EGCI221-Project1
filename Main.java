@@ -26,11 +26,29 @@ class Board {
         this.queenList = new ArrayList<>();
     }
 
-    public void pushQueen() {}              // **********************************************************************************
+    public void pushQueen(int row, int column) {
+        queenList.add(new QueenPlacement(row, column));
+    }
 
-    public void popQueen() {}               // **********************************************************************************
+    public void popQueen(int row, int column) {
+        queenList.remove(new QueenPlacement(row, column));
+    }
 
-    public boolean findSolution(int row) { return true; } // **********************************************************************************
+    public boolean queenCheck(int row, int column) {
+        for (QueenPlacement q : queenList) {
+            if (q.row == row || q.column == column || Math.abs(q.row-row) == (q.column-column))
+                return false;
+        }
+        return true;
+    }
+
+    public boolean findSolution(int row) {
+        if (row == N) {
+            totalSolution++;
+            if (totalSolution==1) { displayBoard(); }
+        }
+        return true;
+    } // **********************************************************************************
 
     public void displayBoard() {
         char[][] board = new char[N][N];
@@ -97,24 +115,26 @@ public class Main {
         if (input.equals("n")) {        // No (Let program do the work)
             board.findSolution(0);
         } else {                          // Yes (Input manually)
-            int[] place = new int[2];
+            int row, col;
             while (true) {
                 System.out.print("Enter row: ");
                 try {
-                    place[0] = Integer.parseInt(scanner.nextLine());
-                    if (place[0]<N+1) break;
+                    row = Integer.parseInt(scanner.nextLine())-1;
+                    if (row<N+1) break;
                 } catch (Exception e) { }
-                System.out.printf("\nError. Please enter no more than %d.\n", N+1);
+                System.out.printf("\nError. Please enter no more than %d.\n", N);
             }
             while (true) {
                 System.out.print("Enter column: ");
                 try {
-                    place[1] = Integer.parseInt(scanner.nextLine());
-                    if (place[1]<N+1) break;
+                    col = Integer.parseInt(scanner.nextLine())-1;
+                    if (col<N+1) break;
                 } catch (Exception e) { }
-                System.out.printf("\nError. Please enter no more than %d.\n", N+1);
+                System.out.printf("\nError. Please enter no more than %d.\n", N);
             }
-            // ********************************************
+            board.pushQueen(row, col);
+            board.displayBoard();
+            board.findSolution(0); // ***************************************************
         }
         scanner.close();
     }
