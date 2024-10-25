@@ -16,13 +16,12 @@ class QueenPlacement {
 class Board {
     private int N;
     private int totalSolution;
-    private boolean showSolution;
     private ArrayList<QueenPlacement> queenList;
+    //public int manualInput;
 
     public Board(int N) {                                           // Constructor
         this.N = N;
         this.totalSolution = 0;
-        this.showSolution = false;
         this.queenList = new ArrayList<>();
     }
 
@@ -31,7 +30,9 @@ class Board {
     }
 
     public void popQueen(int row, int column) {
-        queenList.remove(new QueenPlacement(row, column));
+        if (!queenList.isEmpty()) {
+            queenList.remove(queenList.size() - 1);
+        }
     }
 
     public boolean queenCheck(int row, int column) {
@@ -41,14 +42,38 @@ class Board {
         }
         return true;
     }
+    /*public boolean queenRowCheck(int row, int column) {
+        for (QueenPlacement q : queenList) {
+            if (q.row == row)
+                return true;
+        }
+        return false;
+    }*/
 
-    public boolean findSolution(int row) {
+    public void solve() {
+        findSolution(0);                                        // Display total solution
+        if (totalSolution>0) System.out.printf("There are %d possible solutions.\n", totalSolution);
+        else System.out.println("No solution.");
+    }
+
+    public void findSolution(int row) {
+        //if (row == this.manualInput-1) return;
         if (row == N) {
             totalSolution++;
-            if (totalSolution==1) { displayBoard(); }
+            if (totalSolution==1) { 
+                displayBoard();
+                System.out.println("Calculating...");
+            }
         }
-        return true;
-    } // **********************************************************************************
+
+        for (int col=0; col<N; col++) {
+            if (queenCheck(row, col)) {
+                pushQueen(row, col);
+                findSolution(row+1);        // Proceed to next row
+                popQueen(row, col);
+            }
+        }
+    }
 
     public void displayBoard() {
         char[][] board = new char[N][N];
@@ -74,11 +99,6 @@ class Board {
         System.out.print("\n==========");
         for (int i=0; i<N; i++) System.out.print("===");
         System.out.println("");
-
-        if (showSolution) {                                         // Display total solution
-            if (totalSolution>0) System.out.printf("There are %d possible solutions.\n", totalSolution);
-            else System.out.println("No solution.");
-        }
     }
 }
 
@@ -112,9 +132,9 @@ public class Main {
         }
 
 
-        if (input.equals("n")) {        // No (Let program do the work)
-            board.findSolution(0);
-        } else {                          // Yes (Input manually)
+        if (input.equals("n")) {            // No (Let program do the work)
+            board.solve();
+        } else {                            // Yes (Input manually)
             int row, col;
             while (true) {
                 System.out.print("Enter row: ");
@@ -132,9 +152,9 @@ public class Main {
                 } catch (Exception e) { }
                 System.out.printf("\nError. Please enter no more than %d.\n", N);
             }
-            board.pushQueen(row, col);
+            board.pushQueen(row, col); // board.manualInput = row;
             board.displayBoard();
-            board.findSolution(0); // ***************************************************
+            board.solve(); // ***************************************************
         }
         scanner.close();
     }
