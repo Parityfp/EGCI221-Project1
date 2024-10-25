@@ -16,12 +16,13 @@ class Board {
     private int N;
     private int totalSolution;
     private ArrayList<QueenPlacement> queenList;
-    public int manualInput;
+    private ArrayList<QueenPlacement> manualList;
 
     public Board(int N) {                                           // Constructor
         this.N = N;
         this.totalSolution = 0;
         this.queenList = new ArrayList<>();
+        this.manualList = new ArrayList<>();
     }
 
     public void pushQueen(int row, int column) {
@@ -29,26 +30,32 @@ class Board {
     }
 
     public void popQueen(int row, int column) {
-        if (!queenList.isEmpty()) {
-            queenList.remove(queenList.size() - 1);
+        if (!queenList.isEmpty()) queenList.remove(queenList.size() - 1);
         }
     }
 
     public boolean queenCheck(int row, int column) {    // row 2 col 1
-        for (QueenPlacement q : queenList) {
-            if (q.row == row || q.column == column || Math.abs(q.row-row) == Math.abs(q.column-column))
-                return false;
+        for (QueenPlacement q : manualList) {       // Manual input check
+            if (q.row == row || q.column == column || Math.abs(q.row-row) == Math.abs(q.column-column)) return false;
+        }
+        for (QueenPlacement q : queenList) {        // Auto check
+            if (q.row == row || q.column == column || Math.abs(q.row-row) == Math.abs(q.column-column)) return false;
         }
         return true;
     }
 
-    /*public boolean queenRowCheck(int row, int column) {
-        for (QueenPlacement q : queenList) {
-            if (q.row == row)
-                return true;
+    public boolean manualCheck(int row) {
+        for (QueenPlacement q : manualList) {
+            if (q.row == row) return false;
         }
-        return false;
-    }*/
+        return true;
+    }
+
+    public void manualInput(int row, int col) {
+        manualList.add(new QueenPlacement(row, col));
+        displayBoard();
+        solve();
+    }
 
     public void solve() {
         findSolution(0);                                        // Display total solution
@@ -65,11 +72,9 @@ class Board {
             }
         }
 
-        if (row == this.manualInput-1) row++;
-        //if (row == this.manualInput-1) findSolution(row+1);
-
+        if (!manualCheck(row)) findSolution(row+1); // Check Manual to skip row
         for (int col=0; col<N; col++) {
-            if (queenCheck(row, col)) {
+            if (queenCheck(row, col)) {     // Check Queen backtracking
                 pushQueen(row, col);
                 findSolution(row+1);        // Proceed to next row
                 popQueen(row, col);
@@ -86,9 +91,8 @@ class Board {
             }
         }
 
-        for (QueenPlacement q: queenList) {                         // Assign Queen
-            board[q.row][q.column] = 'Q';
-        }
+        for (QueenPlacement q : queenList) board[q.row][q.column] = 'Q';           // Assign Queen
+        for (QueenPlacement q : manualList) board[q.row][q.column] = 'Q';
 
         System.out.printf("%10s", "");                              // Display board (only up-to N=99)
         for (int i=0; i<N; i++) System.out.printf("%-3d", i+1);
@@ -139,7 +143,7 @@ public class Main {
                 System.out.print("Enter row: ");
                 try {
                     row = Integer.parseInt(scanner.nextLine())-1;
-                    if (row<N+1) break;
+                    if (row<N || row>=0) break;
                 } catch (Exception e) { }
                 System.out.printf("\nError. Please enter no more than %d.\n", N);
             }
@@ -147,14 +151,11 @@ public class Main {
                 System.out.print("Enter column: ");
                 try {
                     col = Integer.parseInt(scanner.nextLine())-1;
-                    if (col<N+1) break;
+                    if (col<N || row>=0) break;
                 } catch (Exception e) { }
                 System.out.printf("\nError. Please enter no more than %d.\n", N);
             }
-            board.manualInput = row;
-            board.pushQueen(row, col); 
-            board.displayBoard();
-            board.solve(); // ***************************************************
+            board.manualInput(row, col);
         }
         scanner.close();
     }
