@@ -110,10 +110,22 @@ class Board {
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("-----------  N-Queen NxN-Board  -----------");
+        while (true) {
+            if (!askInput(scanner)) {
+                System.out.println("Exiting the program..");
+                break;
+            }
+            System.out.println("============================================");
+        }
+        scanner.close();
+    }
+
+    public static boolean askInput(Scanner scanner) {
         String input;
         int N;
 
-        System.out.println("-----------  N-Queen NxN-Board  -----------");
         while (true) {                  // Ask for N size
             System.out.println("Enter N for N*N board (N must be at least 4)");
             try {
@@ -156,6 +168,15 @@ public class Main {
             }
             board.manualInput(row, col);
         }
-        scanner.close();
+
+        while (true) {
+            System.out.println("1: Continue  2: Exit");
+            try {
+                input = scanner.nextLine();
+                if (input.equals("1")) return true;
+                else if (input.equals("2")) return false;
+            } catch (Exception e) { }
+            System.out.println("\nError. Please enter valid input");
+        }
     }
 }
