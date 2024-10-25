@@ -1,5 +1,4 @@
 // package EGCI221-Project1;
-
 import java.util.*;
 
 class QueenPlacement {
@@ -17,7 +16,7 @@ class Board {
     private int N;
     private int totalSolution;
     private ArrayList<QueenPlacement> queenList;
-    //public int manualInput;
+    public int manualInput;
 
     public Board(int N) {                                           // Constructor
         this.N = N;
@@ -35,13 +34,14 @@ class Board {
         }
     }
 
-    public boolean queenCheck(int row, int column) {
+    public boolean queenCheck(int row, int column) {    // row 2 col 1
         for (QueenPlacement q : queenList) {
             if (q.row == row || q.column == column || Math.abs(q.row-row) == Math.abs(q.column-column))
                 return false;
         }
         return true;
     }
+
     /*public boolean queenRowCheck(int row, int column) {
         for (QueenPlacement q : queenList) {
             if (q.row == row)
@@ -64,7 +64,10 @@ class Board {
                 System.out.println("Calculating...");
             }
         }
-        //if (row == this.manualInput-1) return;
+
+        if (row == this.manualInput-1) row++;
+        //if (row == this.manualInput-1) findSolution(row+1);
+
         for (int col=0; col<N; col++) {
             if (queenCheck(row, col)) {
                 pushQueen(row, col);
@@ -107,7 +110,6 @@ public class Main {
         String input;
         int N;
 
-
         System.out.println("-----------  N-Queen NxN-Board  -----------");
         while (true) {                  // Ask for N size
             System.out.println("Enter N for N*N board (N must be at least 4)");
@@ -117,7 +119,6 @@ public class Main {
             } catch (Exception e) { }
             System.out.println("\nError. Please input 4 or more only.");
         }
-
 
         Board board = new Board(N);
         board.displayBoard();           // Print empty board
@@ -130,10 +131,9 @@ public class Main {
             System.out.println("\nError. Please enter valid input.");
         }
 
-
-        if (input.equals("n")) {            // No (Let program do the work)
+        if (input.equals("n")) {           // No (Let program do the work)
             board.solve();
-        } else {                            // Yes (Input manually)
+        } else {                                    // Yes (Input manually)
             int row, col;
             while (true) {
                 System.out.print("Enter row: ");
@@ -151,7 +151,8 @@ public class Main {
                 } catch (Exception e) { }
                 System.out.printf("\nError. Please enter no more than %d.\n", N);
             }
-            board.pushQueen(row, col); // board.manualInput = row;
+            board.manualInput = row;
+            board.pushQueen(row, col); 
             board.displayBoard();
             board.solve(); // ***************************************************
         }
