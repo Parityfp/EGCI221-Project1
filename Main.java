@@ -31,7 +31,6 @@ class Board {
 
     public void popQueen(int row, int column) {
         if (!queenList.isEmpty()) queenList.remove(queenList.size() - 1);
-        }
     }
 
     public boolean queenCheck(int row, int column) {    // row 2 col 1
