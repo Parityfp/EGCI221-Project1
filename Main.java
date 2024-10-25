@@ -57,7 +57,6 @@ class Board {
     }
 
     public void findSolution(int row) {
-        //if (row == this.manualInput-1) return;
         if (row == N) {
             totalSolution++;
             if (totalSolution==1) { 
@@ -65,7 +64,7 @@ class Board {
                 System.out.println("Calculating...");
             }
         }
-
+        //if (row == this.manualInput-1) return;
         for (int col=0; col<N; col++) {
             if (queenCheck(row, col)) {
                 pushQueen(row, col);
