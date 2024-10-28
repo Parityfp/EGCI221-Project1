@@ -154,7 +154,7 @@ public class Main {
                 System.out.print("Enter row: ");
                 try {
                     row = Integer.parseInt(scanner.nextLine())-1;
-                    if (row<N || row>=0) break;
+                    if (row<N && row>=0) break;
                 } catch (Exception e) { }
                 System.out.printf("\nError. Please enter no more than %d.\n", N);
             }
@@ -162,7 +162,7 @@ public class Main {
                 System.out.print("Enter column: ");
                 try {
                     col = Integer.parseInt(scanner.nextLine())-1;
-                    if (col<N || row>=0) break;
+                    if (col<N && col>=0) break;
                 } catch (Exception e) { }
                 System.out.printf("\nError. Please enter no more than %d.\n", N);
             }
