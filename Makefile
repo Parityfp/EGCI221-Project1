@@ -1,9 +1,7 @@
-make:
-	javac -cp "lib/*" Main.java
-	java -cp "lib/*:." Main
+make: compile run
 
 compile:
-	javac -cp "lib/*" Main.java
+	javac -cp "lib/*" ./Main.java
 
 run:
 	java -cp "lib/*:." Main
