@@ -1,5 +1,6 @@
 // package EGCI221-Project1;
 import java.util.*;
+//import org.jgrapht.*;
 
 class BombPlacement {
     int row;
@@ -9,7 +10,6 @@ class BombPlacement {
         this.row = row;
         this.column = column;
     }
-
 }
 
 class Board {
@@ -25,8 +25,11 @@ class Board {
     }
 
     public void assignBoard() {
-        board[0][0] = 'K';
-        board[N-1][N-1] = 'C';
+        for (int i=0; i<N; i++) {
+            for (int j=0; j<N; j++) {
+                board[i][j] = ' ';
+            }
+        }
     }
 
     public void addBomb(int row, int column) {
@@ -66,12 +69,14 @@ class Board {
     }*/
 
     public void displayBoard() {
-        System.out.printf("%-15s", "Cell ID");
-        for (int i=1; i<N*N+1; i++) {
-            System.out.printf("%5d", i);
-            if (i % N == 0) {
-                System.out.printf("\n%15s", ' ');
+        for (int i=0; i<N; i++) {
+            if (i == 0) System.out.printf("%s", "Cell IDs");
+            else System.out.printf("%8s", ' ');
+            for (int j=0; j<N; j++) {
+                System.out.printf("%4d: %c", j+(i*N)+1, board[i][j]);
+                //if (board[i][j]!=' ') System.out.printf("%c", board[i][j]);
             }
+            System.out.println();
         }
     }
 }
@@ -101,51 +106,11 @@ public class Main {
                 N = Integer.parseInt(scanner.nextLine());
                 if (N>=5) break;
             } catch (NumberFormatException e) { }
-            System.out.println("\nError. Please input 4 or more only.");
+            System.out.println("\nError. Please input 5 or more only.");
         }
 
         Board board = new Board(N);     // Create board
         board.displayBoard();           // Print empty board
-
-
-        while (true) {           // ASk for Manual Input
-            System.out.println("Place a bomb or not? (y for yes, n for no)");
-            input = scanner.nextLine().toLowerCase();
-            if (input.equals("y") || input.equals("n")) break;
-            System.out.println("\nError. Please enter valid input.");
-        }
-
-        if (input.equals("n")) { // No (Let program do the work)
-            //board.solve();
-        } else {                 // Yes (Input manually)
-            int row, col;
-            while (true) {       // Ask row
-                System.out.print("Enter row: ");
-                try {
-                    row = Integer.parseInt(scanner.nextLine())-1;
-                    if (row<N && row>=0) break;
-                } catch (NumberFormatException e) { }
-                System.out.printf("\nError. Please enter no more than %d.\n", N);
-            }
-            while (true) {      // Ask column
-                System.out.print("Enter column: ");
-                try {
-                    col = Integer.parseInt(scanner.nextLine())-1;
-                    if (col<N && col>=0) break;
-                } catch (NumberFormatException e) { }
-                System.out.printf("\nError. Please enter no more than %d.\n", N);
-            }
-            //board.manualInput(row, col);
-        }
-
-        while (true) {          // Ask continue or exit
-            System.out.println("1: Continue  2: Exit");
-            try {
-                input = scanner.nextLine();
-                if (input.equals("1")) return true;
-                else if (input.equals("2")) return false;
-            } catch (NumberFormatException e) { }
-            System.out.println("\nError. Please enter valid input");
-        }
+        return true;
     }
 }
