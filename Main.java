@@ -98,19 +98,14 @@ public class Main {
         strInput = scanner.nextLine().split(",");
         for (String bomb : strInput) {
             try {
-                bombCell.add(Integer.parseInt(bomb.trim()));
+                int bombID = Integer.parseInt(bomb);
+
+                if (bombID < 0 || bombID > (N*N)-1) continue;
+                int bombRow = bombID/N;
+                int bombCol = bombID%N;
+                
+                setCell(board, bombRow, bombCol, 'b');
             } catch (NumberFormatException e) { /* Ignore Invalid Input */ }
-        }
-        for (int bombID : bombCell) {   // Adding bomb to Board
-            int bombRow = bombID/N;
-            int bombCol = bombID%N;
-            /* String tmpPos = bombRow + "," + bombCol;
-            if (board.get(tmpPos).type != ' ') {
-                System.out.println("This cell is already occupied." + tmpPos);
-                continue;
-            }
-            System.out.printf("\n\nBombCell:%d row:%d col:%d", bomb, bombRow, bombCol); */      // Check
-            setCell(board, bombRow, bombCol, 'b');
         }
 
         printBoard(board, N);
