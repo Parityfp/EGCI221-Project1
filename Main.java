@@ -5,8 +5,8 @@ import java.util.*;
 //import org.jgrapht.graph.SimpleGraph;
 
 public class Main {
-    private static final int[][] knightMoves = {{2, 1}, {2, -1}, {-2, 1}, {-2, -1},     // Up / Down
-                                                {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};    // Left / Right
+    //private static final int[][] knightMoves = {{2, 1}, {2, -1}, {-2, 1}, {-2, -1},     // Up / Down
+    //                                            {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};    // Left / Right
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -24,6 +24,7 @@ public class Main {
     public static boolean askInput(Scanner scanner) {
         int N, numInput;
         String[] strInput;
+        String position;
 
         // Ask 1
         System.out.println("Enter N for N*N board (N must be at least 5)");
@@ -42,7 +43,7 @@ public class Main {
         Map<String, Cell> board = new HashMap<>();
         for (int row=0; row<N; row++) {     // Initialize for Board
             for (int col=0; col<N; col++) {
-                String position = row + "," + col;
+                position = row + "," + col;
                 board.put(position, new Cell(row, col, ' '));   // Empty Cell
             }
         }
@@ -66,9 +67,8 @@ public class Main {
                 break;
             } catch (NumberFormatException e) { System.out.println("Invalid input."); }
         }
-        int knightRow = numInput/N;
-        int knightCol = numInput%N;
-        setCell(board, knightRow, knightCol, 'K');
+        String knightPos = numInput/N + "," + numInput%N;
+        setCell(board, knightPos, 'K');
 
         // Ask 3
         System.out.println("Enter Castle ID");
@@ -88,36 +88,38 @@ public class Main {
                 break;
             } catch (NumberFormatException e) { System.out.println("Invalid input."); }
         }
-        int castleRow = numInput/N;
-        int castleCol = numInput%N;
-        setCell(board, castleRow, castleCol, 'C');
+        position = numInput/N + "," + numInput%N;
+        setCell(board, position, 'C');
 
         // Ask 4
         System.out.println("Enter bomb IDs separated by comma (Invalid IDs will be ignored)");
-        HashSet<Integer> bombCell = new HashSet<>();
+        // HashSet<Integer> bombCell = new HashSet<>();
         strInput = scanner.nextLine().split(",");
         for (String bomb : strInput) {
             try {
                 int bombID = Integer.parseInt(bomb);
-
-                if (bombID < 0 || bombID > (N*N)-1) continue;
-                int bombRow = bombID/N;
-                int bombCol = bombID%N;
+                if (bombID < 0 || bombID > (N*N)-1) continue;   // Ignore Invalid number input
+                position = bombID/N + "," + bombID%N;
                 
-                setCell(board, bombRow, bombCol, 'b');
-            } catch (NumberFormatException e) { /* Ignore Invalid Input */ }
+                // if (board.get(position).type == ' ') bombCell.add(bombID);
+                setCell(board, position, 'b');
+            } catch (NumberFormatException e) { /* Ignore Error Input */ }
         }
 
         printBoard(board, N);
+        knightToCastle(board, knightPos);
         // ......................................... CONTINUE AT THIS PART
 
         return true;
     }
 
-    public static void setCell(Map<String, Cell> board, int row, int col, char type) {
-        String position = row + "," + col;
-        if (board.get(position).type == ' ') {
-            board.get(position).type = type;
+    public static void knightToCastle(Map<String, Cell> board, String knightPosID) {
+        System.out.printf("\nChecking [%s]: %s\n", knightPosID, board.get(knightPosID).type);
+    }
+
+    public static void setCell(Map<String, Cell> board, String positionID, char type) {
+        if (board.get(positionID).type == ' ') {
+            board.get(positionID).type = type;
         }
     }
 
