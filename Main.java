@@ -107,14 +107,15 @@ public class Main {
         }
 
         printBoard(board, N);
-        knightToCastle(board, knightPos);
+        knightToCastle(board, N, knightPos);
         // ......................................... CONTINUE AT THIS PART
 
         return true;
     }
 
-    public static void knightToCastle(Map<String, Cell> board, String knightPosID) {
-        System.out.printf("\nChecking [%s]: %s\n", knightPosID, board.get(knightPosID).type);
+    public static void knightToCastle(Map<String, Cell> board, int N, String knightPos) {
+        System.out.printf("\nChecking [%s]: %s\n", knightPos, board.get(knightPos).type);
+        // if ......................................
     }
 
     public static void setCell(Map<String, Cell> board, String positionID, char type) {
