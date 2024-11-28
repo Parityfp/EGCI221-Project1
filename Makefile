@@ -4,7 +4,7 @@ compile:
 	javac -cp "lib/*" ./Main.java
 
 run:
-	java -cp "lib/*:." Main
+	java -cp "lib/*;." Main
 
 git:
 	git add .
