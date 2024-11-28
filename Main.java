@@ -7,26 +7,29 @@ import java.util.*;
 public class Main {
     //private static final int[][] knightMoves = {{2, 1}, {2, -1}, {-2, 1}, {-2, -1},     // Up / Down
     //                                            {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};    // Left / Right
+    static int N, knightPos;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Map<Integer, Cell> board = new HashMap<>();
         
         while (true) {
-            if (!askInput(scanner)) {
+            if (!askInput(board, scanner)) {
                 System.out.println("Exiting the program...");
                 break;
             }
+            printBoard(board);
+            knightToCastle(board);
         }
         scanner.close();
     }
 
 
-    public static boolean askInput(Scanner scanner) {
-        int N, numInput;
+    public static boolean askInput(Map<Integer, Cell> board, Scanner scanner) {
+        int numInput;
         String[] strInput;
-        String position;
 
-        // Ask 1
+        // Ask 1 : Choose Board size
         System.out.println("Enter N for N*N board (N must be at least 5)");
         while (true) {
             try {
@@ -39,17 +42,11 @@ public class Main {
             } catch (NumberFormatException e) { System.out.println("Invalid input."); }
         }
 
-        // BOARD
-        Map<String, Cell> board = new HashMap<>();
-        for (int row=0; row<N; row++) {     // Initialize for Board
-            for (int col=0; col<N; col++) {
-                position = row + "," + col;
-                board.put(position, new Cell(row, col, ' '));   // Empty Cell
-            }
-        }
-        printBoard(board, N);
+        // Initialize for Empty Board
+        for (int cellID=0; cellID<N*N; cellID++) board.put(cellID, new Cell(cellID/N, cellID%N, ' '));
+        printBoard(board);
 
-        // Ask 2
+        // Ask 2 : Put Knight
         System.out.println("Enter Knight ID");
         while (true) {
             try {
@@ -58,8 +55,7 @@ public class Main {
                     System.out.println("Input must be according to Cell IDs.");
                     continue;
                 } else {
-                    String tmpPos = numInput/N + "," + numInput%N;
-                    if (board.get(tmpPos).type != ' ') {
+                    if (board.get(numInput).type != ' ') {
                         System.out.println("This cell is already occupied.");
                         continue;
                     }
@@ -67,10 +63,10 @@ public class Main {
                 break;
             } catch (NumberFormatException e) { System.out.println("Invalid input."); }
         }
-        String knightPos = numInput/N + "," + numInput%N;
-        setCell(board, knightPos, 'K');
+        setCell(board, numInput, 'K');
+        knightPos = numInput;
 
-        // Ask 3
+        // Ask 3 : Put Castle
         System.out.println("Enter Castle ID");
         while (true) {
             try {
@@ -79,8 +75,7 @@ public class Main {
                     System.out.println("Input can only be from given Cell IDs.");
                     continue;
                 } else {
-                    String tmpPos = numInput/N + "," + numInput%N;
-                    if (board.get(tmpPos).type != ' ') {
+                    if (board.get(numInput).type != ' ') {
                         System.out.println("This cell is already occupied.");
                         continue;
                     }
@@ -88,43 +83,43 @@ public class Main {
                 break;
             } catch (NumberFormatException e) { System.out.println("Invalid input."); }
         }
-        position = numInput/N + "," + numInput%N;
-        setCell(board, position, 'C');
+        setCell(board, numInput, 'C');
 
-        // Ask 4
+        // Ask 4 : Put Bomb
         System.out.println("Enter bomb IDs separated by comma (Invalid IDs will be ignored)");
-        // HashSet<Integer> bombCell = new HashSet<>();
         strInput = scanner.nextLine().split(",");
         for (String bomb : strInput) {
             try {
                 int bombID = Integer.parseInt(bomb);
                 if (bombID < 0 || bombID > (N*N)-1) continue;   // Ignore Invalid number input
-                position = bombID/N + "," + bombID%N;
-                
-                // if (board.get(position).type == ' ') bombCell.add(bombID);
-                setCell(board, position, 'b');
-            } catch (NumberFormatException e) { /* Ignore Error Input */ }
+                setCell(board, bombID, 'b');
+            } catch (NumberFormatException e) { /* Ignore Error Input */ System.out.println("Error Input:" + bomb); }
         }
 
-        printBoard(board, N);
-        knightToCastle(board, N, knightPos);
-        // ......................................... CONTINUE AT THIS PART
-
+        printBoard(board);
+        knightToCastle(board);
         return true;
     }
 
-    public static void knightToCastle(Map<String, Cell> board, int N, String knightPos) {
+    public static void knightToCastle(Map<Integer, Cell> board) {
         System.out.printf("\nChecking [%s]: %s\n", knightPos, board.get(knightPos).type);
         // if ......................................
     }
 
-    public static void setCell(Map<String, Cell> board, String positionID, char type) {
-        if (board.get(positionID).type == ' ') {
-            board.get(positionID).type = type;
+    public static void setCell(Map<Integer, Cell> board, int cellID, char type) {
+        if (board.get(cellID).type == ' ') {
+            board.get(cellID).type = type;
         }
     }
 
-    public static void printBoard(Map<String, Cell> board, int N) {
+    public static void printBoard(Map<Integer, Cell> board) {
+        System.out.printf("%8s", "Cell IDs");
+        for (int cellID=0; cellID<N*N; cellID++) {
+            System.out.printf("%5d: %2s", cellID, board.get(cellID).type);
+            if (cellID%N == N-1) System.out.printf("\n%8s", " ");
+        }
+        System.out.println();
+        /*
         for (int row=0; row<N; row++) {
             if (row == 0) System.out.printf("%8s", "Cell IDs");
             else System.out.printf("%8s", " ");
@@ -135,6 +130,7 @@ public class Main {
             }
             System.out.println();
         }
+        */
     }
 }
 
