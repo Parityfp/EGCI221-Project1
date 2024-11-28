@@ -1,31 +1,52 @@
 // package EGCI221-Project2;
 
 import java.util.*;
-//import org.jgrapht.graph.DefaultEdge;
-//import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.*;
+import org.jgrapht.graph.*;
+import org.jgrapht.alg.shortestpath.BFSShortestPath;;
+
+class Cell { // Cells
+    int row, col;
+    char type;
+
+    public Cell(int row, int col, char type) {
+        this.row = row;
+        this.col = col;
+        this.type = type;
+    }
+    
+    @Override
+    public String toString() {
+        return type + "";
+    }
+}
 
 public class Main {
-    //private static final int[][] knightMoves = {{2, 1}, {2, -1}, {-2, 1}, {-2, -1},     // Up / Down
-    //                                            {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};    // Left / Right
-    static int N, knightPos;
-
+// ==============================================================================================================================
+    public static final int[][] knightMoves = {{2, 1}, {2, -1}, {-2, 1}, {-2, -1},     // Up / Down
+                                               {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};    // Left / Right
+    static int N, knightPos, castlePos;
+// ==============================================================================================================================
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Map<Integer, Cell> board = new HashMap<>();
         
         while (true) {
-            if (!askInput(board, scanner)) {
+            askInput(board, scanner); 
+            printBoard(board);
+            BFS(board);
+
+            System.out.println("New game? (y - continue, other - exit)");
+            if (scanner.nextLine().contains("y")) continue;
+            else {
                 System.out.println("Exiting the program...");
                 break;
             }
-            printBoard(board);
-            knightToCastle(board);
         }
         scanner.close();
     }
-
-
-    public static boolean askInput(Map<Integer, Cell> board, Scanner scanner) {
+// ==============================================================================================================================
+    public static void askInput(Map<Integer, Cell> board, Scanner scanner) {
         int numInput;
         String[] strInput;
 
@@ -63,8 +84,8 @@ public class Main {
                 break;
             } catch (NumberFormatException e) { System.out.println("Invalid input."); }
         }
-        setCell(board, numInput, 'K');
-        knightPos = numInput;
+        knightPos = numInput;   // Store Knight initial position inside global variable
+        setCell(board, knightPos, 'K'); // Add Knight to board
 
         // Ask 3 : Put Castle
         System.out.println("Enter Castle ID");
@@ -83,84 +104,97 @@ public class Main {
                 break;
             } catch (NumberFormatException e) { System.out.println("Invalid input."); }
         }
-        setCell(board, numInput, 'C');
+        castlePos = numInput;   // Store Castle initial position inside global variable
+        setCell(board, castlePos, 'C'); // Add Castle to board
 
         // Ask 4 : Put Bomb
         System.out.println("Enter bomb IDs separated by comma (Invalid IDs will be ignored)");
         strInput = scanner.nextLine().split(",");
-        for (String bomb : strInput) {
+        for (String bombInput : strInput) {
             try {
-                int bombID = Integer.parseInt(bomb);
+                int bombID = Integer.parseInt(bombInput);
                 if (bombID < 0 || bombID > (N*N)-1) continue;   // Ignore Invalid number input
-                setCell(board, bombID, 'b');
-            } catch (NumberFormatException e) { /* Ignore Error Input */ System.out.println("Error Input:" + bomb); }
+                setCell(board, bombID, 'b');    // Add BOMB to Board
+            } catch (NumberFormatException e) { /* Ignore Error Input */ }
         }
-
-        printBoard(board);
-        knightToCastle(board);
-        return true;
     }
-
-    public static void knightToCastle(Map<Integer, Cell> board) {
-        System.out.printf("\nChecking [%s]: %s\n", knightPos, board.get(knightPos).type);
-        // if ......................................
-    }
-
+// ==============================================================================================================================
     public static void setCell(Map<Integer, Cell> board, int cellID, char type) {
-        if (board.get(cellID).type == ' ') {
-            board.get(cellID).type = type;
-        }
+        if (board.get(cellID).type == ' ') board.get(cellID).type = type;
     }
-
-    public static void printBoard(Map<Integer, Cell> board) {
+// ==============================================================================================================================
+    public static void printBoard(Map<Integer, Cell> board) {   // Printing at start
         System.out.printf("%8s", "Cell IDs");
         for (int cellID=0; cellID<N*N; cellID++) {
             System.out.printf("%5d: %2s", cellID, board.get(cellID).type);
-            if (cellID%N == N-1) System.out.printf("\n%8s", " ");
+            if (cellID%N == N-1) System.out.printf("\n%8s", "");
         }
         System.out.println();
-        /*
-        for (int row=0; row<N; row++) {
-            if (row == 0) System.out.printf("%8s", "Cell IDs");
-            else System.out.printf("%8s", " ");
-        
-            for (int col=0; col<N; col++) {
-                String position = row + "," + col;
-                System.out.printf("%5d: %2s", col+(row*N), board.get(position).type);
+    }
+// ==============================================================================================================================
+    public static void printPath(GraphPath<Integer, DefaultEdge> path, HashSet<Integer> bombCell) {
+        int moveCount = 0;
+        for (int move : path.getVertexList()) {
+            if (moveCount == 0) System.out.printf("Initially, Knight at [%d]\n", knightPos, "");
+            else System.out.printf("Move %d --> Jump to [%d]\n", moveCount, move, "");
+            for (int cellID=0; cellID<N*N; cellID++) {
+                System.out.printf("%5d: ", cellID);
+                String type =   (bombCell.contains(cellID)) ? "b"
+                              : (cellID == move) ? "K*"
+                              : (cellID == castlePos) ? "C*"
+                              : "";
+                System.out.printf("%2s", type);
+                if (cellID%N == N-1) System.out.printf("\n", "");
             }
+            if (moveCount++ == 0) System.out.printf("\nBest route to Castle = %d moves.\n", path.getLength());
             System.out.println();
         }
-        */
     }
+// ==============================================================================================================================
+    public static void BFS(Map<Integer, Cell> board) {  // *** BREADTH-FIRST SEARCH ***
+        Graph<Integer, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
+        HashSet<Integer> bombCell = new HashSet<>();    // To store Bomb cellID
+
+        for (Map.Entry<Integer, Cell> entry : board.entrySet()) {
+            if (entry.getValue().type != 'b') {     // Add valid CellID as vertex
+                graph.addVertex(entry.getKey());
+                // System.out.println("Adding [" + entry.getKey() + "]: " + entry.getValue());
+            }
+            else bombCell.add(entry.getKey());      // Store bomb data for later use
+        }
+
+        for (Integer cellID : graph.vertexSet()) {  // Add valid moves as edges
+            Cell cell = board.get(cellID);
+            for (int[] move : knightMoves) {    // Check KnightMove rule
+                int nextRow = cell.row + move[0];
+                int nextCol = cell.col + move[1];
+
+                if (isValidMove(board, nextRow, nextCol)) { // Function check for boundary and Bomb
+                    int nextCell = (nextRow * N) + nextCol;
+                    graph.addEdge(cellID, nextCell);
+                }
+            }
+        }
+        BFSShortestPath<Integer, DefaultEdge> bfs = new BFSShortestPath<>(graph);   // Use build-in algorithm
+        GraphPath<Integer, DefaultEdge> path = bfs.getPath(knightPos, castlePos);   // Finding all possible path bfs.getPath(SOURCE, TARGET);
+
+        if (path == null) System.out.println("No path found.");
+        else printPath(path, bombCell);
+    }
+// ==============================================================================================================================
+    public static boolean isValidMove(Map<Integer, Cell> board, int row, int col) {
+        if (row < 0 || row >= N || col < 0 || col >= N) return false;   // Check boundary
+        int cellID = (row * N) + col;
+        return board.get(cellID).type != 'b';   // B O M B ! ! !
+    }
+// ==============================================================================================================================
 }
-
-
-class Cell { // Cells
-    int row, col;
-    char type;
-
-    public Cell(int row, int col, char type) {
-        this.row = row;
-        this.col = col;
-        this.type = type;
-    }
-    
-    @Override
-    public String toString() {
-        return type + "";
-    }
-}
-
-
 
 /*
-for (int i=0; i<N; i++) {
-    if (i == 0) System.out.printf("%8s", "Cell IDs");
-    else System.out.printf("%8s", " ");
 
-    for (int j=0; j<N; j++) {
-        System.out.printf("%5d", j+(i*N));
-    }
-    System.out.println();
-}
+int CellID = (row * N) + col;   // Row & Column to CellID
+
+int row = CellID/N;     // CellID to Row
+int col = CellID%N;     // CellID to Column
+
 */
