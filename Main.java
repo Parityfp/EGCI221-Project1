@@ -145,7 +145,7 @@ public class Main {
                               : (cellID == move) ? "K*"
                               : (cellID == castlePos) ? "C*"
                               : "";
-                System.out.printf("%2s", type);
+                System.out.printf("%-2s", type);
                 if (cellID%N == N-1) System.out.printf("\n", "");
             }
             if (moveCount++ == 0) System.out.printf("\nBest route to Castle = %d moves.\n", path.getLength());
