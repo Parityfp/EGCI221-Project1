@@ -1,3 +1,6 @@
-# EGCI221-Project1 & Project2
+# EGCI221-Project1
 N-Queens problem in Java
-Format Support until N = 59
+
+# EGCI221-Project2
+N-Board Knight to Castle
+Board Format Supported until N = 58
