@@ -136,17 +136,18 @@ public class Main {
 // ==============================================================================================================================
     public static void printPath(GraphPath<Integer, DefaultEdge> path, HashSet<Integer> bombCell) {
         int moveCount = 0;
-        for (int move : path.getVertexList()) {
+        for (int knightPath : path.getVertexList()) {
             if (moveCount == 0) System.out.printf("Initially, Knight at [%d]\n", knightPos, "");
-            else System.out.printf("Move %d --> Jump to [%d]\n", moveCount, move, "");
+            else System.out.printf("Move %d --> Jump to [%d]\n", moveCount, knightPath, "");
             for (int cellID=0; cellID<N*N; cellID++) {
-                System.out.printf("%5d: ", cellID);
+                System.out.printf("%4d: ", cellID);
                 String type =   (bombCell.contains(cellID)) ? "b"
-                              : (cellID == move) ? "K*"
+                              : (cellID == knightPath) ? "K"
                               : (cellID == castlePos) ? "C*"
                               : "";
-                System.out.printf("%-2s", type);
-                if (cellID%N == N-1) System.out.printf("\n", "");
+                if (moveCount == path.getLength() && cellID == castlePos) type = "C+K";
+                System.out.printf("%-3s", type);
+                if (cellID%N == N-1) System.out.println();
             }
             if (moveCount++ == 0) System.out.printf("\nBest route to Castle = %d moves.\n", path.getLength());
             System.out.println();
