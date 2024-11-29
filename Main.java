@@ -159,21 +159,25 @@ public class Main {
 
         for (Map.Entry<Integer, Cell> entry : board.entrySet()) {
             if (entry.getValue().type != 'b') {     // Add valid CellID as vertex
-                graph.addVertex(entry.getKey());
+                int cellID = entry.getKey();
+                graph.addVertex(cellID);
                 // System.out.println("Adding [" + entry.getKey() + "]: " + entry.getValue());
             }
             else bombCell.add(entry.getKey());      // Store bomb data for later use
         }
 
         for (Integer cellID : graph.vertexSet()) {  // Add valid moves as edges
+            HashMap<Integer, Boolean> visited = new HashMap<>();   // Storing Visited Cell for faster search.............................
             Cell cell = board.get(cellID);
             for (int[] move : knightMoves) {    // Check KnightMove rule
+                
                 int nextRow = cell.row + move[0];
                 int nextCol = cell.col + move[1];
 
-                if (isValidMove(board, nextRow, nextCol)) { // Function check for boundary and Bomb
+                if (isValidMove(board, visited, nextRow, nextCol)) { // Function check for boundary and Bomb
                     int nextCell = (nextRow * N) + nextCol;
                     graph.addEdge(cellID, nextCell);
+                    visited.put(nextCell, true);
                 }
             }
         }
@@ -184,10 +188,12 @@ public class Main {
         else printPath(path, bombCell);
     }
 // ==============================================================================================================================
-    public static boolean isValidMove(Map<Integer, Cell> board, int row, int col) {
+    public static boolean isValidMove(Map<Integer, Cell> board, HashMap<Integer,Boolean> visited, int row, int col) {
         if (row < 0 || row >= N || col < 0 || col >= N) return false;   // Check boundary
+
         int cellID = (row * N) + col;
-        return board.get(cellID).type != 'b';   // B O M B ! ! !
+        if (board.get(cellID).type != 'b' && visited.containsKey(cellID) == false) return true; // Check for no bomb and not visited
+        return false;
     }
 // ==============================================================================================================================
 }
