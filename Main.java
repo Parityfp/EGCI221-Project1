@@ -170,16 +170,15 @@ public class Main {
             HashMap<Integer, Boolean> visited = new HashMap<>();   // Storing Visited Cell for faster search.............................
             Cell cell = board.get(cellID);
             for (int[] move : knightMoves) {    // Check KnightMove rule
-                
                 int nextRow = cell.row + move[0];
                 int nextCol = cell.col + move[1];
 
                 if (isValidMove(board, visited, nextRow, nextCol)) { // Function check for boundary and Bomb
                     int nextCell = (nextRow * N) + nextCol;
                     graph.addEdge(cellID, nextCell);
-                    visited.put(nextCell, true);
                 }
             }
+            visited.put(cellID, true);
         }
         BFSShortestPath<Integer, DefaultEdge> bfs = new BFSShortestPath<>(graph);   // Use build-in algorithm
         GraphPath<Integer, DefaultEdge> path = bfs.getPath(knightPos, castlePos);   // Finding all possible path bfs.getPath(SOURCE, TARGET);
