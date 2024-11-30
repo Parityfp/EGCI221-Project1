@@ -136,22 +136,37 @@ public class Main {
 // ==============================================================================================================================
     public static void printPath(GraphPath<Integer, DefaultEdge> path, HashSet<Integer> bombCell) {
         int moveCount = 0;
+        ArrayDeque<Integer> moveOrders = new ArrayDeque<>();
         for (int knightPath : path.getVertexList()) {
             if (moveCount == 0) System.out.printf("Initially, Knight at [%d]\n", knightPos, "");
-            else System.out.printf("Move %d --> Jump to [%d]\n", moveCount, knightPath, "");
+            else {
+                System.out.printf("Move %d --> Jump to [%d]\n", moveCount, knightPath, "");
+                moveOrders.add(knightPath);  // From path
+            }
             for (int cellID=0; cellID<N*N; cellID++) {
                 System.out.printf("%4d: ", cellID);
                 String type =   (bombCell.contains(cellID)) ? "b"
-                              : (cellID == knightPath) ? "K"
+                              : (cellID == knightPath) ? "K*"
                               : (cellID == castlePos) ? "C*"
                               : "";
                 if (moveCount == path.getLength() && cellID == castlePos) type = "C+K";
                 System.out.printf("%-3s", type);
                 if (cellID%N == N-1) System.out.println();
             }
-            if (moveCount++ == 0) System.out.printf("\nBest route to Castle = %d moves.\n", path.getLength());
+            moveCount++;
+            //if (moveCount++ == 0) System.out.printf("\nBest route to Castle = %d moves.\n", path.getLength());
             System.out.println();
         }
+
+        System.out.printf("Move = [%d", knightPos);
+        for (int moveOrder : moveOrders) {
+            System.out.printf(" > %d", moveOrder);
+        }
+        System.out.printf("]\nBest route to Castle = %d moves.\n", path.getLength());
+        for (int i=0; i<N; i++) {
+            System.out.printf("=======");
+        }
+        System.out.println();
     }
 // ==============================================================================================================================
     public static void BFS(Map<Integer, Cell> board) {  // *** BREADTH-FIRST SEARCH ***
