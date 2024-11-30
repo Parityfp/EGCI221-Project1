@@ -136,7 +136,7 @@ public class Main {
 // ==============================================================================================================================
     public static void printPath(GraphPath<Integer, DefaultEdge> path, HashSet<Integer> bombCell) {
         int moveCount = 0;
-        ArrayDeque<Integer> moveOrders = new ArrayDeque<>();
+        ArrayList<Integer> moveOrders = new ArrayList<>();
         for (int knightPath : path.getVertexList()) {
             if (moveCount == 0) System.out.printf("Initially, Knight at [%d]\n", knightPos, "");
             else {
