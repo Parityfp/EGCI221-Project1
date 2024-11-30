@@ -35,7 +35,6 @@ public class Main {
         
         while (true) {
             askInput(board, scanner); 
-            printBoard(board);
             BFS(board);
 
             System.out.println("New game? (y - continue, other - exit)");
@@ -114,7 +113,7 @@ public class Main {
         strInput = scanner.nextLine().split(",");
         for (String bombInput : strInput) {
             try {
-                int bombID = Integer.parseInt(bombInput);
+                int bombID = Integer.parseInt(bombInput.trim());
                 if (bombID < 0 || bombID > (N*N)-1) continue;   // Ignore Invalid number input
                 setCell(board, bombID, 'b');    // Add BOMB to Board
             } catch (NumberFormatException e) { /* Ignore Error Input */ }
@@ -163,10 +162,6 @@ public class Main {
             System.out.printf(" > %d", moveOrder);
         }
         System.out.printf("]\nBest route to Castle = %d moves.\n", path.getLength());
-        for (int i=0; i<N; i++) {
-            System.out.printf("=======");
-        }
-        System.out.println();
     }
 // ==============================================================================================================================
     public static void BFS(Map<Integer, Cell> board) {  // *** BREADTH-FIRST SEARCH ***
@@ -199,8 +194,13 @@ public class Main {
         BFSShortestPath<Integer, DefaultEdge> bfs = new BFSShortestPath<>(graph);   // Use build-in algorithm
         GraphPath<Integer, DefaultEdge> path = bfs.getPath(knightPos, castlePos);   // Finding all possible path bfs.getPath(SOURCE, TARGET);
 
-        if (path == null) System.out.println("No path found.");
+        if (path == null) System.out.println("\nNo path found.");
         else printPath(path, bombCell);
+
+        for (int i=0; i<N; i++) {
+            System.out.printf("=======");
+        }
+        System.out.println();
     }
 // ==============================================================================================================================
     public static boolean isValidMove(Map<Integer, Cell> board, HashMap<Integer,Boolean> visited, int row, int col) {
