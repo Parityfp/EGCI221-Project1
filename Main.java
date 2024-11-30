@@ -31,7 +31,7 @@ public class Main {
 // ==============================================================================================================================
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Map<Integer, Cell> board = new HashMap<>();
+        HashMap<Integer, Cell> board = new HashMap<>();
         
         while (true) {
             askInput(board, scanner); 
