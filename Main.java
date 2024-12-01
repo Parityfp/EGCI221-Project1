@@ -38,7 +38,7 @@ public class Main {
             BFS(board);
 
             System.out.println("New game? (y - continue, other - exit)");
-            if (scanner.nextLine().contains("y")) continue;
+            if (scanner.nextLine().toLowerCase().contains("y")) continue;
             else {
                 System.out.println("Exiting the program...");
                 break;
