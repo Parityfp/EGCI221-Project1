@@ -47,7 +47,7 @@ public class Main {
         scanner.close();
     }
 // ==============================================================================================================================
-    public static void askInput(Map<Integer, Cell> board, Scanner scanner) {
+    public static void askInput(HashMap<Integer, Cell> board, Scanner scanner) {
         int numInput;
         String[] strInput;
 
@@ -120,11 +120,11 @@ public class Main {
         }
     }
 // ==============================================================================================================================
-    public static void setCell(Map<Integer, Cell> board, int cellID, char type) {
+    public static void setCell(HashMap<Integer, Cell> board, int cellID, char type) {
         if (board.get(cellID).type == ' ') board.get(cellID).type = type;
     }
 // ==============================================================================================================================
-    public static void printBoard(Map<Integer, Cell> board) {   // Printing at start
+    public static void printBoard(HashMap<Integer, Cell> board) {   // Printing at start
         System.out.printf("%8s", "Cell IDs");
         for (int cellID=0; cellID<N*N; cellID++) {
             System.out.printf("%5d: %2s", cellID, board.get(cellID).type);
@@ -164,11 +164,11 @@ public class Main {
         System.out.printf("]\nBest route to Castle = %d moves.\n", path.getLength());
     }
 // ==============================================================================================================================
-    public static void BFS(Map<Integer, Cell> board) {  // *** BREADTH-FIRST SEARCH ***
+    public static void BFS(HashMap<Integer, Cell> board) {  // *** BREADTH-FIRST SEARCH ***
         Graph<Integer, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
         HashSet<Integer> bombCell = new HashSet<>();    // To store Bomb cellID
 
-        for (Map.Entry<Integer, Cell> entry : board.entrySet()) {
+        for (HashMap.Entry<Integer, Cell> entry : board.entrySet()) {
             if (entry.getValue().type != 'b') {     // Add valid CellID as vertex
                 int cellID = entry.getKey();
                 graph.addVertex(cellID);
@@ -203,7 +203,7 @@ public class Main {
         System.out.println();
     }
 // ==============================================================================================================================
-    public static boolean isValidMove(Map<Integer, Cell> board, HashMap<Integer,Boolean> visited, int row, int col) {
+    public static boolean isValidMove(HashMap<Integer, Cell> board, HashMap<Integer,Boolean> visited, int row, int col) {
         if (row < 0 || row >= N || col < 0 || col >= N) return false;   // Check boundary
 
         int cellID = (row * N) + col;
